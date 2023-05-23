@@ -44,17 +44,18 @@ Converters
    MaximizeToMinimize
    MinimizeToMaximize
    QuadraticProgramToQubo
+   QuadraticToLinear
 
 """
 
-from .integer_to_binary import IntegerToBinary
+from .flip_problem_sense import MaximizeToMinimize, MinimizeToMaximize
 from .inequality_to_equality import InequalityToEquality
+from .integer_to_binary import IntegerToBinary
 from .linear_equality_to_penalty import LinearEqualityToPenalty
 from .linear_inequality_to_penalty import LinearInequalityToPenalty
-from .flip_problem_sense import MaximizeToMinimize
-from .flip_problem_sense import MinimizeToMaximize
-from .quadratic_program_to_qubo import QuadraticProgramToQubo
 from .quadratic_program_converter import QuadraticProgramConverter
+from .quadratic_program_to_qubo import QuadraticProgramToQubo
+from .quadratic_to_linear import QuadraticToLinear
 
 __all__ = [
     "InequalityToEquality",
@@ -65,4 +66,5 @@ __all__ = [
     "MinimizeToMaximize",
     "QuadraticProgramConverter",
     "QuadraticProgramToQubo",
+    "QuadraticToLinear",
 ]
