@@ -12,6 +12,7 @@
 
 """The SciPy MILP optimizer wrapped to be used within Qiskit's optimization module."""
 
+from typing import Any
 from warnings import warn
 
 import numpy as np
@@ -50,13 +51,14 @@ class ScipyMilpOptimizer(OptimizationAlgorithm):
     to be used within the optimization module.
     """
 
-    def __init__(self, disp: bool = False) -> None:
+    def __init__(self, disp: bool = False, options: dict[str, Any] | None = None) -> None:
         """Initializes the ScipyMILPOptimizer.
 
         Args:
             disp: Whether to print MILP output or not.
         """
         self._disp = disp
+        self._options = options
 
     @property
     def disp(self) -> bool:
@@ -75,6 +77,24 @@ class ScipyMilpOptimizer(OptimizationAlgorithm):
             disp: The display setting.
         """
         self._disp = disp
+
+    @property
+    def options(self) -> dict[str, Any] | None:
+        """Returns the solver options.
+
+        Returns:
+            The options for scipy.milp.
+        """
+        return self._options
+
+    @options.setter
+    def options(self, options: dict[str, Any] | None):
+        """Set the solver options.
+
+        Args:
+            options: The options for scipy.milp.
+        """
+        self._options = options
 
     # pylint:disable=unused-argument
     def get_compatibility_msg(self, problem: QuadraticProgram) -> str:
@@ -156,13 +176,17 @@ class ScipyMilpOptimizer(OptimizationAlgorithm):
 
         self._verify_compatibility(problem)
 
+        options = self._options or {}
+        if "disp" not in options:
+            options["disp"] = self._disp
+
         objective, integrality, bounds, constraints = self._generate_problem(problem)
         raw_result = milp(
             c=objective,
             integrality=integrality,
             bounds=bounds,
             constraints=constraints,
-            options={"disp": self._disp},
+            options=options,
         )
 
         if raw_result.x is None:
