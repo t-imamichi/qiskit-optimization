@@ -149,7 +149,10 @@ class _FromDocplexMp:
 
     def _variables(self):
         # keep track of names separately, since docplex allows to have None names.
-        for x in self._model.iter_variables():
+        variables = list(self._model.iter_variables())
+        if all(x.name and len(x.name) > 1 and x.name.startswith("x") for x in variables):
+            variables.sort(key=lambda e: int(e.name[1:]))
+        for x in variables:
             if isinstance(x.vartype, ContinuousVarType):
                 x_new = self._quadratic_program.continuous_var(x.lb, x.ub, x.name)
             elif isinstance(x.vartype, BinaryVarType):
