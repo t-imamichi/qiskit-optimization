@@ -20,7 +20,7 @@ from typing import Dict, List, Optional, Union, cast
 import numpy as np
 from qiskit import QuantumCircuit, QuantumRegister
 from qiskit.circuit.library import QuadraticForm
-from qiskit.primitives import BaseSampler
+from qiskit.primitives import BaseSamplerV1
 
 from qiskit_optimization.algorithms.optimization_algorithm import (
     OptimizationAlgorithm,
@@ -48,7 +48,7 @@ class GroverOptimizer(OptimizationAlgorithm):
             Union[QuadraticProgramConverter, List[QuadraticProgramConverter]]
         ] = None,
         penalty: Optional[float] = None,
-        sampler: Optional[BaseSampler] = None,
+        sampler: Optional[BaseSamplerV1] = None,
     ) -> None:
         """
         Args:

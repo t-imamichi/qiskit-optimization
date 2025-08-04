@@ -20,7 +20,7 @@ import numpy as np
 
 from qiskit import QuantumCircuit
 from qiskit.quantum_info import SparsePauliOp
-from qiskit.primitives import BaseEstimator
+from qiskit.primitives import BaseEstimatorV2 as BaseEstimator
 from qiskit.quantum_info.operators.base_operator import BaseOperator
 
 from .exceptions import AlgorithmError

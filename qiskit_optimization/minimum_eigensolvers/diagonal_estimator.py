@@ -21,8 +21,12 @@ from dataclasses import dataclass
 
 import numpy as np
 from qiskit.circuit import QuantumCircuit
-from qiskit.primitives import BaseSampler, BaseEstimator, EstimatorResult
-from qiskit.primitives.utils import init_observable, _circuit_key
+from qiskit.primitives import (
+    BaseSamplerV1,
+    BaseEstimatorV1 as BaseEstimator,
+    EstimatorResult,
+)
+from qiskit_optimization.utils.primitives import init_observable, _circuit_key
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.quantum_info.operators.base_operator import BaseOperator
 
@@ -42,7 +46,7 @@ class _DiagonalEstimator(BaseEstimator):
 
     def __init__(
         self,
-        sampler: BaseSampler,
+        sampler: BaseSamplerV1,
         aggregation: float | Callable[[Iterable[tuple[float, float]]], float] | None = None,
         callback: Callable[[Sequence[Mapping[str, Any]]], None] | None = None,
         **options,
@@ -69,7 +73,7 @@ class _DiagonalEstimator(BaseEstimator):
 
         self.aggregation = aggregation
         self.callback = callback
-        self._circuit_ids: dict[int, QuantumCircuit] = {}
+        self._circuit_ids: dict[tuple, QuantumCircuit] = {}
         self._observable_ids: dict[int, BaseOperator] = {}
 
     def _run(

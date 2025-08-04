@@ -19,7 +19,7 @@ from typing import Any
 
 import numpy as np
 from qiskit import ClassicalRegister, QuantumCircuit
-from qiskit.primitives import BaseSampler
+from qiskit.primitives import BaseSamplerV1
 from qiskit.quantum_info import Statevector
 
 from qiskit_optimization.exceptions import AlgorithmError
@@ -115,7 +115,7 @@ class Grover(AmplitudeAmplifier):
         iterations: list[int] | Iterator[int] | int | None = None,
         growth_rate: float | None = None,
         sample_from_iterations: bool = False,
-        sampler: BaseSampler | None = None,
+        sampler: BaseSamplerV1 | None = None,
     ) -> None:
         r"""
         Args:
@@ -166,7 +166,7 @@ class Grover(AmplitudeAmplifier):
         self._iterations_arg = iterations
 
     @property
-    def sampler(self) -> BaseSampler | None:
+    def sampler(self) -> BaseSamplerV1 | None:
         """Get the sampler.
 
         Returns:
@@ -175,7 +175,7 @@ class Grover(AmplitudeAmplifier):
         return self._sampler
 
     @sampler.setter
-    def sampler(self, sampler: BaseSampler) -> None:
+    def sampler(self, sampler: BaseSamplerV1) -> None:
         """Set the sampler.
 
         Args:

@@ -17,7 +17,7 @@ from collections import defaultdict
 
 import numpy as np
 from qiskit import QuantumCircuit
-from qiskit.primitives import BaseSampler
+from qiskit.primitives import BaseSamplerV1
 from qiskit.quantum_info import SparsePauliOp
 
 from qiskit_optimization.algorithms import OptimizationResultStatus, SolutionSample
@@ -57,7 +57,7 @@ class MagicRounding(RoundingScheme):
 
     def __init__(
         self,
-        sampler: BaseSampler,
+        sampler: BaseSamplerV1,
         basis_sampling: str = "uniform",
         seed: int | None = None,
     ):
@@ -94,7 +94,7 @@ class MagicRounding(RoundingScheme):
         super().__init__()
 
     @property
-    def sampler(self) -> BaseSampler:
+    def sampler(self) -> BaseSamplerV1:
         """Returns the Sampler used to sample the magic bases."""
         return self._sampler
 

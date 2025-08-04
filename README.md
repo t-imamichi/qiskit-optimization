@@ -73,7 +73,7 @@ from qiskit_optimization.utils import algorithm_globals
 from qiskit_optimization.minimum_eigensolvers import QAOA
 from qiskit_optimization.optimizers import SPSA
 
-from qiskit.primitives import Sampler
+from qiskit_aer.primitives import Sampler
 
 # Generate a graph of 4 nodes
 n = 4
