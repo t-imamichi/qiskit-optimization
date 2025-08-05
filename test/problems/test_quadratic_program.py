@@ -735,7 +735,7 @@ class TestQuadraticProgram(QiskitOptimizationTestCase):
             q_p.binary_var_list(3)
             _ = q_p.objective.evaluate_gradient({})
 
-    @unittest.skipIf(not _optionals.HAS_CPLEX, "CPLEX not available.")
+    @unittest.skipIf(not _optionals.HAS_GUROBIPY, "Gurobi not available.")
     def test_read_from_lp_file(self):
         """test read lp file"""
         try:
@@ -746,6 +746,7 @@ class TestQuadraticProgram(QiskitOptimizationTestCase):
                 q_p.read_from_lp_file("no_file.txt")
             lp_file = self.get_resource_path("test_quadratic_program.lp", "problems/resources")
             q_p.read_from_lp_file(lp_file)
+            print(q_p.variables)
             self.assertEqual(q_p.name, "my problem")
             self.assertEqual(q_p.get_num_vars(), 3)
             self.assertEqual(q_p.get_num_binary_vars(), 1)
@@ -850,6 +851,7 @@ class TestQuadraticProgram(QiskitOptimizationTestCase):
             1,
             "quad_geq",
         )
+        q_p.write_to_lp_file("output.lp")
 
         reference_file_name = self.get_resource_path(
             "test_quadratic_program.lp", "problems/resources"
@@ -1000,7 +1002,7 @@ class TestQuadraticProgram(QiskitOptimizationTestCase):
         self.assertEqual("c3", constraints[1].name)
         self.assertEqual("c5", constraints[2].name)
 
-    @unittest.skipIf(not _optionals.HAS_CPLEX, "CPLEX not available.")
+    @unittest.skipIf(not _optionals.HAS_GUROBIPY, "Gurobi not available.")
     def test_quadratic_program_element_when_loaded_from_source(self):
         """Test QuadraticProgramElement when QuadraticProgram is loaded from an external source"""
         with self.subTest("from_ising"):

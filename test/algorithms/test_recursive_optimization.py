@@ -23,7 +23,7 @@ from qiskit_algorithms.utils import algorithm_globals
 
 import qiskit_optimization.optionals as _optionals
 from qiskit_optimization.algorithms import (
-    CplexOptimizer,
+    GurobiOptimizer,
     MinimumEigenOptimizer,
     RecursiveMinimumEigenOptimizer,
     SlsqpOptimizer,
@@ -42,7 +42,7 @@ from qiskit_optimization.problems import QuadraticProgram
 class TestRecursiveMinEigenOptimizer(QiskitOptimizationTestCase):
     """Recursive Min Eigen Optimizer Tests."""
 
-    @unittest.skipIf(not _optionals.HAS_CPLEX, "CPLEX not available.")
+    @unittest.skipIf(not _optionals.HAS_GUROBIPY, "Gurobipy not available.")
     def test_recursive_min_eigen_optimizer(self):
         """Test the recursive minimum eigen optimizer."""
         filename = "op_ip1.lp"
@@ -60,18 +60,18 @@ class TestRecursiveMinEigenOptimizer(QiskitOptimizationTestCase):
         lp_file = self.get_resource_path(filename, "algorithms/resources")
         problem.read_from_lp_file(lp_file)
 
-        # solve problem with cplex
-        cplex = CplexOptimizer()
-        cplex_result = cplex.solve(problem)
+        # solve problem with gurobi
+        gurobi = GurobiOptimizer()
+        gurobi_result = gurobi.solve(problem)
 
         # solve problem
         result = recursive_min_eigen_optimizer.solve(problem)
 
         # analyze results
-        np.testing.assert_array_almost_equal(cplex_result.x, result.x, 4)
-        self.assertAlmostEqual(cplex_result.fval, result.fval)
+        np.testing.assert_array_almost_equal(gurobi_result.x, result.x, 4)
+        self.assertAlmostEqual(gurobi_result.fval, result.fval)
 
-    @unittest.skipIf(not _optionals.HAS_CPLEX, "CPLEX not available.")
+    @unittest.skipIf(not _optionals.HAS_GUROBIPY, "Gurobipy not available.")
     def test_recursive_history(self):
         """Tests different options for history."""
         filename = "op_ip1.lp"
@@ -125,7 +125,7 @@ class TestRecursiveMinEigenOptimizer(QiskitOptimizationTestCase):
         self.assertGreater(len(result.history[0]), 1)
         self.assertIsNotNone(result.history[1])
 
-    @unittest.skipIf(not _optionals.HAS_CPLEX, "CPLEX not available.")
+    @unittest.skipIf(not _optionals.HAS_GUROBIPY, "Gurobipy not available.")
     def test_recursive_warm_qaoa(self):
         """Test the recursive optimizer with warm start qaoa."""
         seed = 1234
@@ -147,15 +147,15 @@ class TestRecursiveMinEigenOptimizer(QiskitOptimizationTestCase):
         problem.read_from_lp_file(lp_file)
 
         # solve problem with cplex
-        cplex = CplexOptimizer(cplex_parameters={"threads": 1, "randomseed": 1})
-        cplex_result = cplex.solve(problem)
+        gurobi = GurobiOptimizer()
+        gurobi_result = gurobi.solve(problem)
 
         # solve problem
         result = recursive_min_eigen_optimizer.solve(problem)
 
         # analyze results
-        np.testing.assert_array_almost_equal(cplex_result.x, result.x, 4)
-        self.assertAlmostEqual(cplex_result.fval, result.fval)
+        np.testing.assert_array_almost_equal(gurobi_result.x, result.x, 4)
+        self.assertAlmostEqual(gurobi_result.fval, result.fval)
 
     def test_converter_list(self):
         """Test converter list"""

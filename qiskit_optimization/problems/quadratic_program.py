@@ -13,6 +13,7 @@
 """Quadratic Program."""
 
 import logging
+from os import path
 from collections.abc import Sequence
 from enum import Enum
 from math import isclose
@@ -20,7 +21,6 @@ from typing import Dict, List, Optional, Tuple, Union, cast
 from warnings import warn
 
 import numpy as np
-from docplex.mp.model_reader import ModelReader
 from numpy import ndarray
 from qiskit.quantum_info import SparsePauliOp
 from qiskit.quantum_info.operators.base_operator import BaseOperator
@@ -941,7 +941,7 @@ class QuadraticProgram:
 
         return to_docplex_mp(self).export_as_lp_string()
 
-    @_optionals.HAS_CPLEX.require_in_call
+    @_optionals.HAS_GUROBIPY.require_in_call
     def read_from_lp_file(self, filename: str) -> None:
         """Loads the quadratic program from a LP file.
 
@@ -954,11 +954,17 @@ class QuadraticProgram:
         Note:
             This method requires CPLEX to be installed and present in ``PYTHONPATH``.
         """
+        if not path.exists(filename):
+            raise FileNotFoundError(f"File does not exist: {filename}")
+
+        import gurobipy as gp
+
+        # pylint: disable=cyclic-import
+        from ..translators.gurobipy import from_gurobipy
 
         def _parse_problem_name(filename: str) -> str:
-            # Because docplex model reader uses the base name as model name,
+            # Because gurobipy ignores the problem name,
             # we parse the model name in the LP file manually.
-            # https://ibmdecisionoptimization.github.io/docplex-doc/mp/docplex.mp.model_reader.html
             prefix = "\\Problem name:"
             model_name = ""
             with open(filename, encoding="utf8") as file:
@@ -969,11 +975,9 @@ class QuadraticProgram:
                         break
             return model_name
 
-        # pylint: disable=cyclic-import
-        from ..translators.docplex_mp import from_docplex_mp
-
-        model = ModelReader().read(filename, model_name=_parse_problem_name(filename))
-        other = from_docplex_mp(model)
+        model = gp.read(filename)
+        other = from_gurobipy(model)
+        other.name = _parse_problem_name(filename)
         self._copy_from(other, include_name=True)
 
     def write_to_lp_file(self, filename: str) -> None:
@@ -989,10 +993,10 @@ class QuadraticProgram:
             DOcplexException: If filename is an empty string
         """
         # pylint: disable=cyclic-import
-        from ..translators.docplex_mp import to_docplex_mp
+        from ..translators.gurobipy import to_gurobipy
 
-        mdl = to_docplex_mp(self)
-        mdl.export_as_lp(filename)
+        mdl = to_gurobipy(self)
+        mdl.write(filename)
 
     def substitute_variables(
         self,

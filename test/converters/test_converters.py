@@ -22,7 +22,7 @@ from qiskit_algorithms import NumPyMinimumEigensolver
 
 import qiskit_optimization.optionals as _optionals
 from qiskit_optimization import QiskitOptimizationError, QuadraticProgram
-from qiskit_optimization.algorithms import ADMMOptimizer, CplexOptimizer, MinimumEigenOptimizer
+from qiskit_optimization.algorithms import ADMMOptimizer, GurobiOptimizer, MinimumEigenOptimizer
 from qiskit_optimization.algorithms.admm_optimizer import ADMMParameters
 from qiskit_optimization.converters import (
     InequalityToEquality,
@@ -490,7 +490,7 @@ class TestConverters(QiskitOptimizationTestCase):
             quadratic.objective.quadratic.coefficients.toarray(), quadratic_matrix
         )
 
-    @unittest.skipIf(not _optionals.HAS_CPLEX, "CPLEX not available.")
+    @unittest.skipIf(not _optionals.HAS_GUROBIPY, "Gurobipy not available.")
     def test_continuous_variable_decode(self):
         """Test decode func of IntegerToBinaryConverter for continuous variables"""
         mdl = Model("test_continuous_varable_decode")
@@ -502,7 +502,7 @@ class TestConverters(QiskitOptimizationTestCase):
         op = converter.convert(op)
         admm_params = ADMMParameters()
         qubo_optimizer = MinimumEigenOptimizer(NumPyMinimumEigensolver())
-        continuous_optimizer = CplexOptimizer(cplex_parameters={"threads": 1, "randomseed": 1})
+        continuous_optimizer = GurobiOptimizer()
         solver = ADMMOptimizer(
             qubo_optimizer=qubo_optimizer,
             continuous_optimizer=continuous_optimizer,

@@ -24,7 +24,7 @@ from qiskit_algorithms.optimizers import COBYLA, SPSA
 from qiskit_algorithms.utils import algorithm_globals
 
 import qiskit_optimization.optionals as _optionals
-from qiskit_optimization.algorithms import CplexOptimizer, MinimumEigenOptimizer
+from qiskit_optimization.algorithms import GurobiOptimizer, MinimumEigenOptimizer
 from qiskit_optimization.algorithms.optimization_algorithm import OptimizationResultStatus
 from qiskit_optimization.converters import (
     InequalityToEquality,
@@ -78,7 +78,7 @@ class TestMinEigenOptimizer(QiskitOptimizationTestCase):
         ("qaoa", 10000, "op_ip1.lp"),
     )
     @unpack
-    @unittest.skipIf(not _optionals.HAS_CPLEX, "CPLEX not available.")
+    @unittest.skipIf(not _optionals.HAS_GUROBIPY, "Gurobipy not available.")
     def test_min_eigen_optimizer(self, min_eigen_solver_name, shots, filename):
         """Min Eigen Optimizer Test"""
         try:
@@ -97,7 +97,7 @@ class TestMinEigenOptimizer(QiskitOptimizationTestCase):
             problem.read_from_lp_file(lp_file)
 
             # solve problem with cplex
-            cplex = CplexOptimizer(cplex_parameters={"threads": 1, "randomseed": 1})
+            cplex = GurobiOptimizer()
             cplex_result = cplex.solve(problem)
 
             # solve problem
@@ -117,7 +117,7 @@ class TestMinEigenOptimizer(QiskitOptimizationTestCase):
         ("op_ip1.lp", np.inf, None, OptimizationResultStatus.FAILURE),
     )
     @unpack
-    @unittest.skipIf(not _optionals.HAS_CPLEX, "CPLEX not available.")
+    @unittest.skipIf(not _optionals.HAS_GUROBIPY, "Gurobipy not available.")
     def test_min_eigen_optimizer_with_filter(self, filename, lowerbound, fval, status):
         """Min Eigen Optimizer Test"""
         try:
